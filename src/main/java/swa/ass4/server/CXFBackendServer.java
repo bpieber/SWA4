@@ -10,16 +10,16 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import swa.ass4.server.cxf.Greeter;
-import swa.ass4.server.cxf.GreeterImpl;
+import swa.ass4.server.cxf.LoginService;
+import swa.ass4.server.cxf.LoginServiceImpl;
 
 public class CXFBackendServer {
 	private static final int BACKEND_PORT = 9000;
 
 	private final static String URL = "http://localhost:9000/";
-	
-    private static final Logger LOG = Logger.getLogger(CXFBackendServer.class.getName());
 
+	private static final Logger LOG = Logger.getLogger(CXFBackendServer.class
+			.getName());
 
 	public static void main(String[] args) throws Exception {
 		Server httpServer;
@@ -35,25 +35,26 @@ public class CXFBackendServer {
 					ServletContextHandler.NO_SESSIONS);
 			context.setContextPath("/");
 			httpServer.setHandler(context);
-			
-//			This servlet is only necessary if jax-rs resources are published otherwise the CXFNonSpringServlet can be used. 
+
+			// This servlet is only necessary if jax-rs resources are published
+			// otherwise the CXFNonSpringServlet can be used.
 			ServletHolder cxfServlet = context.addServlet(
 					CXFNonSpringJaxrsServlet.class, "/*");
-//			ServletHolder cxfServlet = context.addServlet(
-//			CXFNonSpringServlet.class, "/*");
-		
+			// ServletHolder cxfServlet = context.addServlet(
+			// CXFNonSpringServlet.class, "/*");
+
 			cxfServlet.setInitOrder(1);
-//			tell the jax-rs servlet which services exist
+			// tell the jax-rs servlet which services exist
 			cxfServlet.setInitParameter("jaxrs.serviceClasses",
 					"swa.ass4.server.DummyRestResource");
 
 			httpServer.start();
-			
-//			publish a simple jax-ws service  			
-			Greeter impl = new GreeterImpl();
-			Endpoint.publish("/Greeter", impl);
 
-		  LOG.info("Server URI: " + URL);
+			// publish a simple jax-ws service
+			LoginService impl = new LoginServiceImpl();
+			Endpoint.publish("/LoginService", impl);
+
+			LOG.info("Server URI: " + URL);
 
 		} catch (Exception e) {
 			e.printStackTrace();
